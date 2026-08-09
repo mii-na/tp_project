@@ -1,25 +1,40 @@
+import type { WordInfo } from "../types/WordInfo";
+
+// type WordInfo = {
+//   word: string;
+//   category: string;
+//   meaning: string;
+//   origin: string;
+//   culture: string;
+//   example: string;
+// }
+
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  word: WordInfo|null;
 };
 
 export default function WordModal({
   isOpen,
   onClose,
+  word,
 }: Props) {
-  if (!isOpen) return null;
+  if (!isOpen || !word) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
 
       <div className="w-[500px] rounded-3xl bg-white p-8 shadow-2xl">
 
+        {/* ヘッダー */}
         <div className="mb-6 flex items-center justify-between">
 
           <h2 className="text-3xl font-bold">
-            makan
+            {word.word}
           </h2>
 
+          {/* 閉じるボタン */}
           <button
             onClick={onClose}
             className="text-2xl text-gray-500 hover:text-black"
@@ -29,14 +44,15 @@ export default function WordModal({
 
         </div>
 
+        {/* 意味とか */}
         <div className="space-y-5">
-
+        
           <div>
             <h3 className="font-semibold text-gray-500">
               Category
             </h3>
 
-            <p>Food</p>
+            <p>{word.category}</p>
           </div>
 
           <div>
@@ -44,7 +60,7 @@ export default function WordModal({
               Meaning
             </h3>
 
-            <p>To eat</p>
+            <p>{word.meaning}</p>
           </div>
 
           <div>
@@ -52,7 +68,7 @@ export default function WordModal({
               Origin
             </h3>
 
-            <p>Malay</p>
+            <p>{word.origin}</p>
           </div>
 
           <div>
@@ -61,7 +77,7 @@ export default function WordModal({
             </h3>
 
             <p>
-              Commonly used in Singapore and Malaysia.
+              {word.culture}
             </p>
           </div>
 
@@ -71,7 +87,7 @@ export default function WordModal({
             </h3>
 
             <p>
-              Let's makan together!
+              {word.example}
             </p>
           </div>
 
