@@ -24,18 +24,18 @@ export default function Translator({
         onChange={(e)=>setInputText(e.target.value)}
         />
 
-        {/* Languge Selector */}
+        {/* 言語選択 */}
         <div className="mt-6 flex items-center justify-between">
 
         <select className="rounded-xl border border-gray-300 px-4 py-2">
 
-            <option>English</option>
+            <option>Singlish</option>
 
             <option>Japanese</option>
 
         </select>
 
-        {/* Translate Button */}
+        {/* Translateボタン */}
         <button 
         className="rounded-full bg-blue-500 px-6 py-3 font-medium text-white transition hover:bg-blue-600"
         onClick={onTranslate}>

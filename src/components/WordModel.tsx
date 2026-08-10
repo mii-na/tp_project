@@ -1,13 +1,5 @@
 import type { WordInfo } from "../types/WordInfo";
-
-// type WordInfo = {
-//   word: string;
-//   category: string;
-//   meaning: string;
-//   origin: string;
-//   culture: string;
-//   example: string;
-// }
+import { useEffect } from "react";
 
 type Props = {
   isOpen: boolean;
@@ -15,17 +7,43 @@ type Props = {
   word: WordInfo|null;
 };
 
+
+
 export default function WordModal({
   isOpen,
   onClose,
   word,
 }: Props) {
-  if (!isOpen || !word) return null;
+
+  // ESCキーを押した時にもポップを閉じれるようにする
+  useEffect(() => {
+    const escDown = (e:KeyboardEvent) => {
+      if(e.key === "Escape"){
+        onClose();
+      }
+    };
+
+    if(isOpen){
+      window.addEventListener("keydown", escDown);
+    }
+
+    return() => {
+      window.removeEventListener("keydown", escDown);
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen || !word) return null;  
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div 
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+    onClick={onClose} //背景クリックで閉じる
+    > 
 
-      <div className="w-[500px] rounded-3xl bg-white p-8 shadow-2xl">
+      <div 
+      className="w-[500px] rounded-3xl bg-white p-8 shadow-2xl"
+      onClick={(e) => e.stopPropagation()} //内側クリックでは閉じない
+      >
 
         {/* ヘッダー */}
         <div className="mb-6 flex items-center justify-between">
