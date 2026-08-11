@@ -13,6 +13,10 @@ type Props ={
 export default function Trans_Result({
   translation, words, onWordClick,
 }:Props) {
+
+  // 空白で単語ごとに分けてtokens配列に入れる
+  const tokens = translation.original.split(" ");
+
   return (
     <section className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
 
@@ -20,24 +24,6 @@ export default function Trans_Result({
         Translation
       </h2>
 
-      {/* Detected Words */}
-      <div className="mt-8">
-        <h3 className="mb-3 text-sm font-medium text-gray-500">
-          Detected Words
-        </h3>
-
-        <div className="flex flex-wrap gap-2">
-          {words.map((word) => (
-            <button
-              key={word.word}
-              onClick={() => onWordClick(word)}
-              className="rounded-full bg-blue-100 px-4 py-2 text-blue-700 transition hover:bg-blue-200"
-            >
-              {word.word}
-            </button>
-          ))}
-        </div>
-      </div>
 
       <div className="space-y-6">
 
@@ -47,9 +33,38 @@ export default function Trans_Result({
             Original
           </h3>
 
-          <p className="text-lg">
-            {translation.original}
+          <p className="text-lg leading-8">
+            {tokens.map((token,index) => {
+              // tokens配列の中の記号を抜いてcleanTokenに代入
+              const cleanToken = token.replace(/[.,!?]/g, "");
+              //matchedWordにcleanTokenの小文字にしたやつと単語リストの小文字にしたやつが一致するか確認して代入
+              const matchedWord = words.find(
+                (word) => 
+                  word.word.toLowerCase() === cleanToken.toLowerCase()
+              );
+
+              //もしmatchedWordがあれば該当箇所をボタンにする
+              if(matchedWord){
+                return(
+                  <button
+                  key={index}
+                  onClick={() => onWordClick(matchedWord)}
+                  className="mx-1 rounded-md bg-blue-100 px-1 text-blue-700 transition hover:bg-blue-200"
+                  >
+                    {token}
+                    </button>
+                );
+              }
+
+              //何もなかったら返す
+              return(
+                <span key={index} className="mx-1">
+                  {token}
+                </span>
+              );
+          })}
           </p>
+
         </div>
 
         {/* Enlgish Translation */}

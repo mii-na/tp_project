@@ -2,11 +2,10 @@ import type { WordInfo } from "../types/WordInfo";
 import { useEffect } from "react";
 
 type Props = {
-  isOpen: boolean;
-  onClose: () => void;
-  word: WordInfo|null;
+  isOpen: boolean; //ポップアップを閉じるか
+  onClose: () => void; //閉じる時に実行する関数
+  word: WordInfo|null; //表示する単語のデータ，無いときはnull
 };
-
 
 
 export default function WordModal({
@@ -23,16 +22,18 @@ export default function WordModal({
       }
     };
 
+    //ポップアップが出ている時だけescボタンの監視
     if(isOpen){
       window.addEventListener("keydown", escDown);
     }
-
+    
+    //ポップアップが閉じられたら監視終了
     return() => {
       window.removeEventListener("keydown", escDown);
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen || !word) return null;  
+  if (!isOpen || !word) return null;  //ポップアップが開いていないまたは単語データがない場合は何も表示しない
 
   return (
     <div 
