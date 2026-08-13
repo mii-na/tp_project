@@ -15,7 +15,10 @@ export default function Home() {
     english: "",
     japanese:"",
     original:"",
-  });;
+  });
+  
+  const [words, setWords] = useState<WordInfo[]>([]);
+
   //履歴のため
   const [history, setHistory] = useState<string[]>([]);
   //ポップアップ
@@ -44,10 +47,11 @@ export default function Home() {
        // Translationに保存
       setTranslation({
         english: data.english,
-        japanese:"",
-        original:data.original,
-        // words: [],
+        japanese: data.japanese,
+        original: data.original,
       });
+
+      setWords(data.words);
 
       setHistory((prev) => [inputText, ...prev])      
 
@@ -56,32 +60,33 @@ export default function Home() {
     }
   };
 
-  const dummyWords: WordInfo[] = [
-  {
-    word: "makan",
-    category: "Singlish",
-    meaning: "To eat",
-    origin: "Malay",
-    culture: "Commonly used in Singapore and Malaysia.",
-    example: "Let's makan together!",
-  },
-  {
-    word: "lah",
-    category: "Singlish",
-    meaning: "A sentence-final particle used to add emphasis or friendliness.",
-    origin: "Chinese dialects and other local languages",
-    culture: "One of the most recognizable features of Singlish.",
-    example: "Can lah!",
-  },
-  {
-    word: "Bugis",
-    category: "Place",
-    meaning: "A district in Singapore.",
-    origin: "Bugis people of Indonesia",
-    culture: "Known for shopping, food, and Bugis MRT.",
-    example: "Let's meet at Bugis.",
-  },
-];
+
+//   const dummyWords: WordInfo[] = [
+//   {
+//     word: "makan",
+//     category: "Singlish",
+//     meaning: "To eat",
+//     origin: "Malay",
+//     culture: "Commonly used in Singapore and Malaysia.",
+//     example: "Let's makan together!",
+//   },
+//   {
+//     word: "lah",
+//     category: "Singlish",
+//     meaning: "A sentence-final particle used to add emphasis or friendliness.",
+//     origin: "Chinese dialects and other local languages",
+//     culture: "One of the most recognizable features of Singlish.",
+//     example: "Can lah!",
+//   },
+//   {
+//     word: "Bugis",
+//     category: "Place",
+//     meaning: "A district in Singapore.",
+//     origin: "Bugis people of Indonesia",
+//     culture: "Known for shopping, food, and Bugis MRT.",
+//     example: "Let's meet at Bugis.",
+//   },
+// ];
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -98,7 +103,7 @@ export default function Home() {
 
         <Trans_Result
           translation={translation}
-          words={dummyWords}
+          words={words}
           onWordClick={(word) => {
             setSelectedWord(word);
             setIsModel(true);
