@@ -43,8 +43,8 @@ export default function Home() {
 
        // Translationに保存
       setTranslation({
-        english: data.original,
-        japanese:data.original,
+        english: data.english,
+        japanese:"",
         original:data.original,
         // words: [],
       });
