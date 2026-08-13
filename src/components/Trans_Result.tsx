@@ -48,7 +48,7 @@ export default function Trans_Result({
                 return(
                   <button
                   key={index}
-                  onClick={() => onWordClick(matchedWord)}
+                  onClick={() => onWordClick(matchedWord)} //クリックされたらポップアップの呼び出し
                   className="mx-1 rounded-md bg-blue-100 px-1 text-blue-700 transition hover:bg-blue-200"
                   >
                     {token}
