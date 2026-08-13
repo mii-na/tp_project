@@ -19,6 +19,7 @@ app.get("/", (req, res) => {
 // /translateのURLにPOSTリクエストが来た時の処理
 app.post("/translate", async(req, res) => {
     const {text} = req.body;
+    const startTime = Date.now();
 
     // 入力された文字列を取得して表示
     console.log("Received text:", text);
@@ -37,69 +38,77 @@ app.post("/translate", async(req, res) => {
                 },
 
                 body: JSON.stringify({
-                    model: "openrouter/free", // 無料版のモデルを使用
+                    //model: "openrouter/free", // 無料版のモデルを使用
+                    model: "poolside/laguna-xs-2.1:free",
+
+                    reasoning:{
+                        effort: "minimal" //思考を最小限に
+                    },
 
                     // プロンプト
                     messages:[
                         {
                             role:"user",
                             //content: `Translate the following Singlish into standard English. Singlish: ${text}`,
-                            content: `Analyze the following sentence and return ONLY valid JSON.
+                            content: `Analyze the input sentence and return ONLY valid JSON.
 
-                                        Your tasks are:
+Tasks:
+1. Translate Singlish into natural Standard English.
+2. Translate Singlish into natural Japanese.
+3. Detect Singapore-specific words or expressions that actually appear in the input.
 
-                                        1. Translate the Singlish sentence into natural Standard English.
-                                        2. Translate the Singlish sentence into natural Japanese.
-                                        3. Identify Singapore-specific words, expressions, slang, food names, place names, transportation names, and organization names.
-                                        4. For each identified word, explain its meaning, origin, cultural background, and provide an example sentence.
+Detect only:
+- Singlish expressions: lah, lor, leh, meh, etc.
+- Singapore-related slang: chope, shiok, paiseh, etc.
+- Food-related words: makan, kaya toast, laksa, etc.
+- Singapore place names: Bugis, Orchard, etc.
+- Singapore transportation names: MRT, EZ-Link, etc.
+- Singapore organization names: NUS, NTU, etc.
 
-                                        Important rules:
+Rules:
+- Do NOT detect ordinary English words.
+- Do NOT invent words.
+- "word" must exactly match the text in the input.
+- If no Singapore-specific words are found, return [].
+- Preserve Singapore place names in the English translation.
+- Remove Singlish particles such as "lah", "lor", "leh", and "meh" from the English translation when they do not affect the meaning.
+- Japanese must be a natural translation of the English translation.
+- Do not invent information about word origins or cultural background.
+- If the origin or cultural background is uncertain, say "Uncertain".
 
-                                        - Do not identify ordinary English words as Singapore-specific words.
-                                        - Keep proper nouns such as Singapore place names when appropriate.
-                                        - "lah", "lor", "leh", and "meh" should be considered Singlish expressions.
-                                        - Words such as "makan", "chope", "shiok", and "paiseh" should be considered Singapore-related expressions when appropriate.
-                                        - Do not invent words that are not present in the input.
-                                        - If there are no Singapore-specific words, return an empty words array.
-                                        - The "word" field must contain the exact word or expression found in the input.
-                                        - Return ONLY JSON. Do not include Markdown, explanations, or code fences.
+For each detected word, provide:
+- meaning
+- origin
+- cultural background
+- example
 
-                                        Translation rules:
+Return ONLY JSON. No Markdown. No explanations.
 
-                                        - Translate the sentence into natural Standard English.
-                                        - Do not preserve Singlish particles such as "lah", "lor", "leh", or "meh" in the English translation unless necessary for meaning.
-                                        - Preserve proper nouns such as "Bugis", "Orchard", and "Singapore" exactly as they appear.
-                                        - Do not transliterate or modify Singapore place names.
-                                        - Translate the Japanese sentence naturally.
-                                        - Preserve proper nouns in their original form or use their standard Japanese representation when appropriate.
-                                        - Do not invent information about the origin or cultural background of a word.
-                                        - If the origin or cultural background is uncertain, clearly indicate that it is uncertain.
+JSON format:
+{
+  "english": "English translation",
+  "japanese": "Japanese translation",
+  "words": [
+    {
+      "word": "exact word from input",
+      "category": "Singlish | Slang | Food | Place | Transportation | Organization",
+      "meaning": "meaning",
+      "origin": "origin",
+      "culture": "cultural background",
+      "example": "example sentence"
+    }
+  ]
+}
 
-                                        Required JSON format:
-
-                                        {
-                                        "english": "Standard English translation",
-                                        "japanese": "Japanese translation",
-                                        "words": [
-                                            {
-                                            "word": "detected word",
-                                            "category": "Singlish | Slang | Food | Place | Transportation | Organization",
-                                            "meaning": "meaning",
-                                            "origin": "origin",
-                                            "culture": "cultural background",
-                                            "example": "example sentence"
-                                            }
-                                        ]
-                                        }
-
-                                        Input sentence:
-                                        ${text}`,
+Input:
+${text}`
                         },
                     ],
                 }),
             }
         );
 
+        
         const data = await response.json();
         console.log("OpenRouter response:", data);
 
@@ -118,6 +127,14 @@ app.post("/translate", async(req, res) => {
             japanese: parsedResult.japanese,
             words: parsedResult.words,
         });
+
+        const endTime = Date.now();
+
+        console.log(
+            "OpenRouter response time:",
+            endTime-startTime,
+            "ms"
+        );
 
     // エラー処理
     }catch(error){

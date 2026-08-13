@@ -13,7 +13,7 @@ export default function Header() {
             </h1>
 
             <p className="text-xs text-gray-500">
-              Learn Singapore English
+              Learn Singlish
             </p>
           </div>
         </div>
