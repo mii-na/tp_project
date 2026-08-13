@@ -5,6 +5,7 @@ import Trans_Result from "../components/Trans_Result";
 import History from "../components/History";
 import type {WordInfo} from "../types/WordInfo";
 import WordModel from "../components/WordModel";
+// import { text } from "stream/consumers";
 
 export default function Home() {
  //inputTextの内容(初期値は(""))を読み取ってsetInputTextに書き込む
@@ -22,17 +23,37 @@ export default function Home() {
   //意味
   const [selectedWord, setSelectedWord] = useState<WordInfo | null>(null);
 
-  //ボタンクリック時に呼び出し，，，
-  const handleTranslate = () => {
-    // 反映
-    setTranslation({
-    english: inputText,
-    japanese:inputText,
-    original:inputText,
-  });
+  //translateボタンクリック時の処理
+  const handleTranslate = async () => {
+    // サーバにHTTPリクエストの送信
+    try{
+      const response = await fetch("http://localhost:3000/translate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // JSONを送るよーって言ってる
+        },
+        body: JSON.stringify({
+          text:inputText, //入力を文字列にして送信
+        }),
+      });
 
-  setHistory((prev) => [inputText, ...prev])
+      // バックエンドからの結果をdataに受け取る
+      const data = await response.json();
+      console.log("Backend response:", data);
 
+       // Translationに保存
+      setTranslation({
+        english: data.original,
+        japanese:data.original,
+        original:data.original,
+        // words: [],
+      });
+
+      setHistory((prev) => [inputText, ...prev])      
+
+    }catch(error){
+      console.error("Translation error:", error);
+    }
   };
 
   const dummyWords: WordInfo[] = [

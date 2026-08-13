@@ -30,7 +30,7 @@ export default function Trans_Result({
         {/* Singlish Original */}
         <div>
           <h3 className="mb-2 text-sm font-medium text-gray-500">
-            Original
+            Singlish
           </h3>
 
           <p className="text-lg leading-8">
