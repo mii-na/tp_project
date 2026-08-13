@@ -1,3 +1,4 @@
+// ポップアップ
 import type { WordInfo } from "../types/WordInfo";
 import { useEffect } from "react";
 

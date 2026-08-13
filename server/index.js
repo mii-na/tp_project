@@ -1,4 +1,4 @@
-// バックエンドの処理
+// バックエンドの処理，AI部分の実装
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";

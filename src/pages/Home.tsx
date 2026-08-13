@@ -1,3 +1,4 @@
+// 全体を管理するスクリプト
 import { useState } from "react";
 import Header from "../components/Header";
 import Translator from "../components/Translator";
@@ -5,7 +6,6 @@ import Trans_Result from "../components/Trans_Result";
 import History from "../components/History";
 import type {WordInfo} from "../types/WordInfo";
 import WordModel from "../components/WordModel";
-// import { text } from "stream/consumers";
 
 export default function Home() {
  //inputTextの内容(初期値は(""))を読み取ってsetInputTextに書き込む
@@ -51,42 +51,15 @@ export default function Home() {
         original: data.original,
       });
 
+      // 見つけたwordをセット
       setWords(data.words);
-
+      // Historyに記録
       setHistory((prev) => [inputText, ...prev])      
 
     }catch(error){
       console.error("Translation error:", error);
     }
   };
-
-
-//   const dummyWords: WordInfo[] = [
-//   {
-//     word: "makan",
-//     category: "Singlish",
-//     meaning: "To eat",
-//     origin: "Malay",
-//     culture: "Commonly used in Singapore and Malaysia.",
-//     example: "Let's makan together!",
-//   },
-//   {
-//     word: "lah",
-//     category: "Singlish",
-//     meaning: "A sentence-final particle used to add emphasis or friendliness.",
-//     origin: "Chinese dialects and other local languages",
-//     culture: "One of the most recognizable features of Singlish.",
-//     example: "Can lah!",
-//   },
-//   {
-//     word: "Bugis",
-//     category: "Place",
-//     meaning: "A district in Singapore.",
-//     origin: "Bugis people of Indonesia",
-//     culture: "Known for shopping, food, and Bugis MRT.",
-//     example: "Let's meet at Bugis.",
-//   },
-// ];
 
   return (
     <main className="min-h-screen bg-gray-50">

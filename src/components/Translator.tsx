@@ -1,3 +1,4 @@
+// 入力エリアのUI
 type Props = {
   inputText: string;
   setInputText: React.Dispatch<React.SetStateAction<string>>;
@@ -12,11 +13,12 @@ export default function Translator({
   return (
     <section className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
 
-        {/* Card Title */}
+        {/* タイトル */}
         <h2 className="mb-6 text-2xl font-semibold">
-        Translate Singlish
+          Shinglish Translater
         </h2>
 
+        {/* 入力部分 */}
         <textarea
         className="h-40 w-full resize-none rounded-2xl border border-gray-300 p-4 outline-none focus:border-blue-500"
         placeholder="Type your Singlish sentence..."

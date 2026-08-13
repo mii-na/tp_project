@@ -1,3 +1,4 @@
+// 翻訳結果
 import type { WordInfo } from "../types/WordInfo";
 
 type Props ={

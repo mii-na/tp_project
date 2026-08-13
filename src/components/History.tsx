@@ -1,3 +1,4 @@
+// Historyの管理
 type Props = {
   history: string[];
 };
