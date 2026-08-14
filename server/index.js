@@ -2,6 +2,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import { error } from "node:console";
 
 dotenv.config();
 
@@ -39,10 +40,21 @@ app.post("/translate", async(req, res) => {
 
                 body: JSON.stringify({
                     //model: "openrouter/free", // 無料版のモデルを使用
-                    model: "poolside/laguna-xs-2.1:free",
+                    //model: "poolside/laguna-xs-2.1:free",
+                    //model: "nvidia/nemotron-3-nano-30b-a3b:free",
+                    //model: "openrouter/free",
+                    model: "google/gemma-4-26b-a4b-it:free",
+                    
+                    //失敗したときに次使うモデルたち
+                    models:[
+                        "google/gemma-4-26b-a4b-it:free",
+                        "poolside/laguna-xs-2.1:free",
+                        "nvidia/nemotron-3-nano-30b-a3b:free"
+                    ],
 
+                    //思考を最小限に
                     reasoning:{
-                        effort: "minimal" //思考を最小限に
+                        effort: "minimal" 
                     },
 
                     // プロンプト
@@ -50,67 +62,81 @@ app.post("/translate", async(req, res) => {
                         {
                             role:"user",
                             //content: `Translate the following Singlish into standard English. Singlish: ${text}`,
-                            content: `Analyze the input sentence and return ONLY valid JSON.
+                            content:  `Analyze the input and return ONLY valid JSON.
+                            Tasks:
+                            1. Translate Singlish into natural Standard English.
+                            2. Translate it into natural Japanese.
+                            3. Detect Singapore-specific words, expressions, slang, food, places, transportation, and organizations.
+                            4. Explain each detected item with meaning, origin, culture, and an example.
 
-Tasks:
-1. Translate Singlish into natural Standard English.
-2. Translate Singlish into natural Japanese.
-3. Detect Singapore-specific words or expressions that actually appear in the input.
+                            Rules:
+                            - Do not detect ordinary English words.
+                            - Detect only words or expressions actually present in the input.
+                            - Keep multi-word expressions together. For example, "steady pom pi pi" is ONE expression.
+                            - The "word" field must exactly match the text in the input.
+                            - Treat "lah", "lor", "leh", and "meh" as Singlish.
+                            - Examples of Singapore-related terms include "makan", "chope", "shiok", "paiseh", "steady pom pi pi", "laksa", "Bugis", "MRT", and "NUS".
+                            - Do not invent origins or cultural information. If uncertain, say "Uncertain".
+                            - Remove Singlish particles such as "lah" from the Standard English translation when they do not add essential meaning.
+                            - Preserve Singaporean proper nouns such as Bugis, Orchard, Lau Pa Sat, and NUS.
+                            - Japanese should be a natural translation of the English meaning, not a word-for-word translation.
 
-Detect only:
-- Singlish expressions: lah, lor, leh, meh, etc.
-- Singapore-related slang: chope, shiok, paiseh, etc.
-- Food-related words: makan, kaya toast, laksa, etc.
-- Singapore place names: Bugis, Orchard, etc.
-- Singapore transportation names: MRT, EZ-Link, etc.
-- Singapore organization names: NUS, NTU, etc.
+                            Categories must be exactly:
+                            "Singlish", "Slang", "Food", "Place", "Transportation", or "Organization".
 
-Rules:
-- Do NOT detect ordinary English words.
-- Do NOT invent words.
-- "word" must exactly match the text in the input.
-- If no Singapore-specific words are found, return [].
-- Preserve Singapore place names in the English translation.
-- Remove Singlish particles such as "lah", "lor", "leh", and "meh" from the English translation when they do not affect the meaning.
-- Japanese must be a natural translation of the English translation.
-- Do not invent information about word origins or cultural background.
-- If the origin or cultural background is uncertain, say "Uncertain".
+                            JSON format:
+                            {
+                            "english": "Standard English translation",
+                            "japanese": "Japanese translation",
+                            "words": [
+                                {
+                                "word": "detected word",
+                                "category": "category",
+                                "meaning": "meaning",
+                                "origin": "origin",
+                                "culture": "cultural background",
+                                "example": "example sentence"
+                                }
+                            ]
+                            }
 
-For each detected word, provide:
-- meaning
-- origin
-- cultural background
-- example
+                            JSON requirements:
+                            - Return ONLY JSON.
+                            - No Markdown or code fences.
+                            - The output must be directly parseable by JSON.parse().
+                            - Every item in "words" must be an object.
+                            - Never put a standalone string in "words".
+                            - No trailing commas.
+                            - If nothing is detected, use "words": [].
 
-Return ONLY JSON. No Markdown. No explanations.
-
-JSON format:
-{
-  "english": "English translation",
-  "japanese": "Japanese translation",
-  "words": [
-    {
-      "word": "exact word from input",
-      "category": "Singlish | Slang | Food | Place | Transportation | Organization",
-      "meaning": "meaning",
-      "origin": "origin",
-      "culture": "cultural background",
-      "example": "example sentence"
-    }
-  ]
-}
-
-Input:
-${text}`
+                            Input:
+                            ${text}`
                         },
                     ],
                 }),
             }
         );
 
-        
+        // 入力をターミナルに表示
         const data = await response.json();
         console.log("OpenRouter response:", data);
+
+        // エラー発生時の対応
+        if(!response.ok){
+            console.error("Invalid API error:", data);
+
+            return res.status(response.status).json({
+                error: data.error?.message || "OpenRouter request failed",
+            });
+        }
+
+        if(!data.choices || !data.choices[0]){
+            console.error("Invalid OpenRouter response:", data);
+
+            return res.status(500).json({
+                error: "Invalid response from OpenRouter",
+            });
+        }
 
         // AIの回答をresultに保存
         const result = data.choices[0].message.content;
