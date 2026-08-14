@@ -122,6 +122,7 @@ app.post("/translate", async(req, res) => {
         console.log("OpenRouter response:", data);
 
         // エラー発生時の対応
+        // HTTP通信が失敗したら，その内容を表示
         if(!response.ok){
             console.error("Invalid API error:", data);
 
@@ -130,6 +131,7 @@ app.post("/translate", async(req, res) => {
             });
         }
 
+        // OpenRouterが混雑していたら，またはJSONが帰ってこなかったらその内容を表示
         if(!data.choices || !data.choices[0]){
             console.error("Invalid OpenRouter response:", data);
 
