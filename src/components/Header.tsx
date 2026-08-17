@@ -18,16 +18,8 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Navigation Button*/}
-        <nav className="flex gap-8">
-          <button className="text-gray-700 hover:text-blue-600 transition">
-            Home
-          </button>
-
-          <button className="text-gray-700 hover:text-blue-600 transition">
-            History
-          </button>
-        </nav>
+      {/* ファビコンの変更 */}
+        <link rel="icon" href="src\materials\favicon.png"/>
 
       </div>
     </header>
