@@ -15,7 +15,7 @@ export default function Translator({
 
         {/* タイトル */}
         <h2 className="mb-6 text-2xl font-semibold">
-          Shinglish Translater
+          Shinglish Translator
         </h2>
 
         {/* 入力部分 */}
