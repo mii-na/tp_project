@@ -51,7 +51,6 @@ app.post("/translate", async(req, res) => {
                         "google/gemma-4-26b-a4b-it:free",
                         "poolside/laguna-xs-2.1:free",
                         "nvidia/nemotron-3-nano-30b-a3b:free",
-                        "openrouter/free"
                     ],
 
                     //思考を最小限に

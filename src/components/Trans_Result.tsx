@@ -26,7 +26,7 @@ export default function Trans_Result({
   while (i < tokens.length) {
 
     // 現在の単語から記号を除去
-    const cleanToken = tokens[i].replace(/[.,!?@]/g, "");
+    const cleanToken = tokens[i].replace(/[\p{P}]/gu, "");
 
     // words配列の中から条件に合う要素だけを取り出す，words配列の各要素をword変数に代入
     const candidates = words.filter((word) => {
@@ -34,7 +34,7 @@ export default function Trans_Result({
       // word変数空白と記号の削除
       const firstWord = word.word
         .split(/\s+/)[0]
-        .replace(/[.,!?@]/g, "");
+        .replace(/[\p{P}]/gu, "");
 
       // firstWordとcleanTokenが一致していればtrueで返す
       return firstWord.toLowerCase() === cleanToken.toLowerCase();
@@ -53,7 +53,7 @@ export default function Trans_Result({
       const inputTokens = tokens
         .slice(i, i + wordTokens.length)
         .map((token) =>
-          token.replace(/[.,!?@]/g, "")
+          token.replace(/[\p{P}]/gu, "")
         );
 
       // すべての単語が一致しているか確認 
