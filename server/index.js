@@ -11,6 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// サーバの動作確認用
 app.get("/", (req, res) => {
   res.json({
     message: "Singlish Translator Backend is running!",
@@ -34,7 +35,7 @@ app.post("/translate", async(req, res) => {
 
                 // .envに保存したAPIキーを取得
                 headers:{
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/json", //今からjson送るよー
                     "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
                 },
 
@@ -49,7 +50,8 @@ app.post("/translate", async(req, res) => {
                     models:[
                         "google/gemma-4-26b-a4b-it:free",
                         "poolside/laguna-xs-2.1:free",
-                        "nvidia/nemotron-3-nano-30b-a3b:free"
+                        "nvidia/nemotron-3-nano-30b-a3b:free",
+                        "openrouter/free"
                     ],
 
                     //思考を最小限に
@@ -61,7 +63,6 @@ app.post("/translate", async(req, res) => {
                     messages:[
                         {
                             role:"user",
-                            //content: `Translate the following Singlish into standard English. Singlish: ${text}`,
                             content:  `Analyze the input and return ONLY valid JSON.
                             Tasks:
                             1. Translate Singlish into natural Standard English.
@@ -125,13 +126,13 @@ app.post("/translate", async(req, res) => {
         // HTTP通信が失敗したら，その内容を表示
         if(!response.ok){
             console.error("Invalid API error:", data);
-
+            // エラーメッセージがあれば見る
             return res.status(response.status).json({
                 error: data.error?.message || "OpenRouter request failed",
             });
         }
 
-        // OpenRouterが混雑していたら，またはJSONが帰ってこなかったらその内容を表示
+        // OpenRouterから期待した形式の回答が帰ってきたか
         if(!data.choices || !data.choices[0]){
             console.error("Invalid OpenRouter response:", data);
 
@@ -145,7 +146,7 @@ app.post("/translate", async(req, res) => {
 
         // AIの回答を表示
         console.log("AI response:", result);
-
+        // JSONをオブジェクトに変換
         const parsedResult = JSON.parse(result);
 
         // resに原文と回答を保存
