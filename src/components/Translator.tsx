@@ -1,7 +1,7 @@
 // 入力エリアのUI
 type Props = {
   inputText: string;
-  setInputText: React.Dispatch<React.SetStateAction<string>>;
+  setInputText: (text: string) => void;
   onTranslate: ()=> void;
 };
 
@@ -23,19 +23,20 @@ export default function Translator({
         className="h-40 w-full resize-none rounded-2xl border border-gray-300 p-4 outline-none focus:border-blue-500"
         placeholder="Type your Singlish sentence..."
         value={inputText}
-        onChange={(e)=>setInputText(e.target.value)}
+        onChange={(e)=>setInputText(e.target.value)} //現在の入力欄の内容をinputTextに保存・更新
         />
 
-        {/* 言語選択 */}
+        
         <div className="mt-6 flex items-center justify-between">
-
-        <select className="rounded-xl border border-gray-300 px-4 py-2">
+        
+        {/* 言語選択 */}
+        {/* <select className="rounded-xl border border-gray-300 px-4 py-2">
 
             <option>Singlish</option>
 
             <option>Japanese</option>
 
-        </select>
+        </select> */}
 
         {/* Translateボタン */}
         <button 

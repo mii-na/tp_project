@@ -4,8 +4,8 @@ import { useEffect } from "react";
 
 type Props = {
   isOpen: boolean; //ポップアップを閉じるか
-  onClose: () => void; //閉じる時に実行する関数
-  word: WordInfo|null; //表示する単語のデータ，無いときはnull
+  onClose: () => void; 
+  word: WordInfo|null; 
 };
 
 

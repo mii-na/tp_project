@@ -17,58 +17,55 @@ export default function Trans_Result({
   onWordClick,
 }: Props) {
 
-  // 入力文をスペースで分割
+  // 入力文をスペース(\s+により，1個以上連続している空白)で分割して配列に代入
   const tokens = translation.original.split(/\s+/);
-
   // 表示用の結果
   const result = [];
 
-  // 現在チェックしている位置
   let i = 0;
-
   while (i < tokens.length) {
 
     // 現在の単語から記号を除去
     const cleanToken = tokens[i].replace(/[.,!?@]/g, "");
 
-    /*
-     先頭の単語を探して候補として保持
-     */
+    // words配列の中から条件に合う要素だけを取り出す，words配列の各要素をword変数に代入
     const candidates = words.filter((word) => {
-
+      
+      // word変数空白と記号の削除
       const firstWord = word.word
         .split(/\s+/)[0]
         .replace(/[.,!?@]/g, "");
 
+      // firstWordとcleanTokenが一致していればtrueで返す
       return firstWord.toLowerCase() === cleanToken.toLowerCase();
     });
 
-    let matchedWord: WordInfo | undefined;
+    let matchedWord: WordInfo | undefined; //WordInfoが入るかもしれないほぼnull
     let matchedLength = 0;
 
-    /*
-     候補について後続の単語まで一致するか確認
-     */
+    // 候補について後続の単語まで一致するか確認
+    // candidatesに入っている要素を1つずつ調べる
     for (const word of candidates) {
 
       const wordTokens = word.word.split(/\s+/);
 
-      // 入力側から候補と同じ数の単語を取得
+      // 複数後の単語を分割
       const inputTokens = tokens
         .slice(i, i + wordTokens.length)
         .map((token) =>
           token.replace(/[.,!?@]/g, "")
         );
 
-      /* すべての単語が一致しているか確認 */
+      // すべての単語が一致しているか確認 
       const isMatch =
-        wordTokens.length === inputTokens.length &&
-        wordTokens.every(
+        wordTokens.length === inputTokens.length && //単語数が一致しているか
+        wordTokens.every( // 配列の中身が一致するか全単語を比較
           (wordToken, index) =>
             wordToken.toLowerCase() ===
             inputTokens[index].toLowerCase()
         );
 
+      // 単語が全て一致したら記録して何単語かも保存
       if (isMatch) {
         matchedWord = word;
         matchedLength = wordTokens.length;
@@ -76,10 +73,10 @@ export default function Trans_Result({
       }
     }
 
-    /*複数語の表現が見つかった場合*/
+    // 複数語の表現が見つかった場合
     if (matchedWord) {
 
-      result.push(
+      result.push( // result配列の最後に要素を追加
         <button
           key={i}
           onClick={() => onWordClick(matchedWord!)}
@@ -97,17 +94,15 @@ export default function Trans_Result({
       continue;
     }
 
-    /*
-      複数語として一致しなかった場合、 1単語として検索する
-     */
+    // 複数語として一致しなかった場合、 1単語として検索する 
     const singleWord = words.find(
       (word) =>
         word.word.toLowerCase() ===
         cleanToken.toLowerCase()
     );
-
+    
+    // 単語が見つかったら，ボタンを追加
     if (singleWord) {
-
       result.push(
         <button
           key={i}
@@ -119,8 +114,7 @@ export default function Trans_Result({
       );
 
     } else {
-
-      /* Singapore-specific wordではない場合 */
+      // singlishではない場合は普通の文字として表示
       result.push(
         <span
           key={i}
