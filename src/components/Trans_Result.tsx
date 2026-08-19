@@ -80,7 +80,7 @@ export default function Trans_Result({
         <button
           key={i}
           onClick={() => onWordClick(matchedWord!)}
-          className="mx-1 rounded-md bg-blue-100 px-1 text-blue-700 transition hover:bg-blue-200"
+          className={`mx-1 rounded-md px-1 transition ${getCategoryStyle(matchedWord.category)}`}
         >
           {tokens
             .slice(i, i + matchedLength)
@@ -107,7 +107,7 @@ export default function Trans_Result({
         <button
           key={i}
           onClick={() => onWordClick(singleWord)}
-          className="mx-1 rounded-md bg-blue-100 px-1 text-blue-700 transition hover:bg-blue-200"
+          className={`mx-1 rounded-md px-1 transition ${getCategoryStyle(singleWord.category)}`}
         >
           {tokens[i]}
         </button>
@@ -175,4 +175,24 @@ export default function Trans_Result({
 
     </section>
   );
+}
+
+// 単語によって色を分ける処理
+function getCategoryStyle(category: string) {
+  switch (category) {
+    case "Singlish":
+      return "bg-blue-100 text-blue-700";
+    case "Slang":
+      return "bg-red-100 text-red-700";
+    case "Food":
+      return "bg-green-100 text-green-700";
+    case "Place":
+      return "bg-yellow-100 text-yellow-700";
+    case "Transportation":
+      return "bg-purple-100 text-purple-700";
+    case "Organization":
+      return "bg-pink-100 text-pink-700";
+    default:
+      return "bg-gray-100 text-gray-700";
+  }
 }
