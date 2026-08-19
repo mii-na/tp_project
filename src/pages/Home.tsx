@@ -17,17 +17,15 @@ export default function Home() {
     original:"",
   });
   
-  const [words, setWords] = useState<WordInfo[]>([]);
-
-  //履歴のため
-  const [history, setHistory] = useState<string[]>([]);
-  //ポップアップ
-  const [isModel, setIsModel] = useState(false);
-  //意味
-  const [selectedWord, setSelectedWord] = useState<WordInfo | null>(null);
+  const [words, setWords] = useState<WordInfo[]>([]); 
+  const [history, setHistory] = useState<string[]>([]); //履歴のため  
+  const [isModel, setIsModel] = useState(false); //ポップアップ  
+  const [selectedWord, setSelectedWord] = useState<WordInfo | null>(null); //意味
+  const [isLoading, setIsLoading] = useState(false); //AI処理中かどうか
 
   //translateボタンクリック時の処理
   const handleTranslate = async () => {
+    setIsLoading(true);
     // サーバにHTTPリクエストの送信
     try{
       const response = await fetch("http://localhost:3000/translate", {
@@ -59,6 +57,9 @@ export default function Home() {
     }catch(error){
       console.error("Translation error:", error);
     }
+    finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -72,6 +73,7 @@ export default function Home() {
           inputText={inputText}
           setInputText={setInputText}
           onTranslate={handleTranslate}
+          isLoading={isLoading}
         />
 
         <Trans_Result

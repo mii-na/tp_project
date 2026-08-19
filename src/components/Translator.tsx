@@ -3,12 +3,14 @@ type Props = {
   inputText: string;
   setInputText: (text: string) => void;
   onTranslate: ()=> void;
+  isLoading: boolean;
 };
 
 export default function Translator({
   inputText,
   setInputText,
   onTranslate,
+  isLoading,
 }: Props) {
   return (
     <section className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
@@ -40,10 +42,13 @@ export default function Translator({
 
         {/* Translateボタン */}
         <button 
-        className="rounded-full bg-blue-500 px-6 py-3 font-medium text-white transition hover:bg-blue-600"
-        onClick={onTranslate}>
+        className="rounded-full bg-blue-500 px-6 py-3 font-medium text-white transition hover:bg-blue-600
+        disabled:cursor-not-allowed disabled:bg-gray-300"
+        onClick={onTranslate}
+        disabled={isLoading}
+        >
 
-            Translate
+          {isLoading ? "Translating..." : "Translate"}
 
         </button>
 
