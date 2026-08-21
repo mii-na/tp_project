@@ -16,8 +16,8 @@ export default function Translator({
     <section className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
 
         {/* タイトル */}
-        <h2 className="mb-6 text-2xl font-semibold">
-          Singlish Translator
+        <h2 className="mb-6 text-xl font-semibold">
+          Input your Singlish
         </h2>
 
         {/* 入力部分 */}
