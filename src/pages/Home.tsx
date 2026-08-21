@@ -132,8 +132,7 @@ export default function Home() {
           }}
         />
 
-        <History history={history} />
-
+        
         <Library
           library={library}
           onWordClick={(word) => {
@@ -141,6 +140,8 @@ export default function Home() {
             setIsModel(true);
           }}
         />
+
+        <History history={history} />
 
         <WordModel
             isOpen={isModel}
