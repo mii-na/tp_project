@@ -10,6 +10,7 @@ type Props = {
 
 export default function LibraryPanel({ library, onWordClick }: Props) {
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Libraryに実際に存在するカテゴリだけをフィルターとして表示
   const categories = useMemo(() => {
@@ -25,14 +26,23 @@ export default function LibraryPanel({ library, onWordClick }: Props) {
     ? selectedCategory
     : "All";
 
-  // 選択されたカテゴリに合わせて表示する単語を絞り込む
+  // 検索文字列とカテゴリの両方で単語を絞り込む
   const filteredWords = useMemo(() => {
-    if (activeCategory === "All") {
-      return library;
-    }
+    const normalizedSearchTerm = searchTerm.trim().toLowerCase();
 
-    return library.filter((word) => word.category === activeCategory);
-  }, [library, activeCategory]);
+    return library.filter((word) => {
+      const matchesCategory =
+        activeCategory === "All" || word.category === activeCategory;
+
+      const matchesSearch =
+        normalizedSearchTerm === "" ||
+        word.word.toLowerCase().includes(normalizedSearchTerm) ||
+        word.meaning.toLowerCase().includes(normalizedSearchTerm) ||
+        word.category.toLowerCase().includes(normalizedSearchTerm);
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [library, activeCategory, searchTerm]);
 
   return (
     <section className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
@@ -49,6 +59,17 @@ export default function LibraryPanel({ library, onWordClick }: Props) {
         <p className="text-gray-500">No words yet</p>
       ) : (
         <>
+          <div className="mb-4">
+            <input
+              type="search"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search words..."
+              aria-label="Search words"
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+            />
+          </div>
+
           <div className="mb-6 flex flex-wrap gap-2">
             {categories.map((category) => (
               <button
@@ -68,7 +89,7 @@ export default function LibraryPanel({ library, onWordClick }: Props) {
 
           {filteredWords.length === 0 ? (
             <p className="py-8 text-center text-gray-500">
-              No words in this category.
+              No words found.
             </p>
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
