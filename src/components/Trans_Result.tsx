@@ -76,7 +76,7 @@ export default function Trans_Result({
     // 複数語の表現が見つかった場合
     if (matchedWord) {
 
-      result.push( // result配列の最後に要素を追加
+      result.push(
         <button
           key={i}
           onClick={() => onWordClick(matchedWord!)}
@@ -94,7 +94,7 @@ export default function Trans_Result({
       continue;
     }
 
-    // 複数語として一致しなかった場合、 1単語として検索する 
+    // 複数語として一致しなかった場合、1単語として検索する
     const singleWord = words.find(
       (word) =>
         word.word.toLowerCase() ===
@@ -169,6 +169,34 @@ export default function Trans_Result({
           <p className="text-lg">
             {translation.japanese}
           </p>
+        </div>
+
+        {/* Category Legend */}
+        <div className="border-t border-gray-200 pt-6">
+          <h3 className="mb-3 text-sm font-medium text-gray-500">
+            Categories
+          </h3>
+
+          <div className="flex flex-wrap gap-2">
+            <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
+              Singlish
+            </span>
+            <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
+              Slang
+            </span>
+            <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+              Food
+            </span>
+            <span className="rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-700">
+              Place
+            </span>
+            <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-700">
+              Transportation
+            </span>
+            <span className="rounded-full bg-pink-100 px-3 py-1 text-xs font-medium text-pink-700">
+              Organization
+            </span>
+          </div>
         </div>
 
       </div>
