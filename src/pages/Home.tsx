@@ -117,11 +117,11 @@ export default function Home() {
 
       <div className="mx-auto max-w-5xl p-8">
         <div className="mb-6 flex justify-center">
-          <div className="inline-flex rounded-xl bg-gray-100 p-1">
+          <div className="inline-flex w-full max-w-md rounded-xl bg-gray-100 p-1">
             <button
               type="button"
               onClick={() => setActiveTab("Translator")}
-              className={`rounded-lg px-6 py-2.5 text-sm font-medium transition ${
+              className={`flex-1 rounded-lg px-8 py-3 text-sm font-medium transition ${
                 activeTab === "Translator"
                   ? "bg-white text-gray-900 shadow-sm"
                   : "text-gray-500 hover:text-gray-900"
@@ -132,7 +132,7 @@ export default function Home() {
             <button
               type="button"
               onClick={() => setActiveTab("Library")}
-              className={`rounded-lg px-6 py-2.5 text-sm font-medium transition ${
+              className={`flex-1 rounded-lg px-8 py-3 text-sm font-medium transition ${
                 activeTab === "Library"
                   ? "bg-white text-gray-900 shadow-sm"
                   : "text-gray-500 hover:text-gray-900"
