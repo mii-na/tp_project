@@ -13,9 +13,8 @@ app.use(express.json());
 // 試すモデルのリスト（優先順）
 const MODELS = [
   "google/gemma-4-26b-a4b-it:free",
-  "poolside/laguna-xs-2.1:free",
   "nvidia/nemotron-3-nano-30b-a3b:free",
-  "nvidia/nemotron-nano-9b-v2",
+  "poolside/laguna-xs-2.1:free",
   "openrouter/free",
 ];
 
