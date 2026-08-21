@@ -115,7 +115,7 @@ export default function Home() {
     <main className="min-h-screen bg-gray-50">
       <Header />
 
-      <div className="mx-auto max-w-5xl p-8">
+      <div className="mx-auto max-w-6xl p-8">
         <div className="mb-6 flex justify-center">
           <div className="inline-flex w-full max-w-md rounded-xl bg-gray-100 p-1">
             <button
@@ -145,18 +145,20 @@ export default function Home() {
 
         {activeTab === "Translator" ? (
           <div className="space-y-6">
-            <Translator
-              inputText={inputText}
-              setInputText={setInputText}
-              onTranslate={handleTranslate}
-              isLoading={isLoading}
-            />
+            <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+              <Translator
+                inputText={inputText}
+                setInputText={setInputText}
+                onTranslate={handleTranslate}
+                isLoading={isLoading}
+              />
 
-            <Trans_Result
-              translation={translation}
-              words={library}
-              onWordClick={handleWordClick}
-            />
+              <Trans_Result
+                translation={translation}
+                words={library}
+                onWordClick={handleWordClick}
+              />
+            </div>
 
             <History history={history} />
           </div>
