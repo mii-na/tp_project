@@ -20,20 +20,19 @@ export default function LibraryPanel({ library, onWordClick }: Props) {
     return ["All", ...uniqueCategories];
   }, [library]);
 
+  // Libraryの内容が変わって選択中のカテゴリがなくなった場合はAllとして扱う
+  const activeCategory = categories.includes(selectedCategory)
+    ? selectedCategory
+    : "All";
+
   // 選択されたカテゴリに合わせて表示する単語を絞り込む
   const filteredWords = useMemo(() => {
-    if (selectedCategory === "All") {
+    if (activeCategory === "All") {
       return library;
     }
 
-    return library.filter((word) => word.category === selectedCategory);
-  }, [library, selectedCategory]);
-
-  // Libraryの内容が変わって、選択中のカテゴリがなくなった場合はAllに戻す
-  const isSelectedCategoryAvailable = categories.includes(selectedCategory);
-  if (!isSelectedCategoryAvailable && selectedCategory !== "All") {
-    setSelectedCategory("All");
-  }
+    return library.filter((word) => word.category === activeCategory);
+  }, [library, activeCategory]);
 
   return (
     <section className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
@@ -57,7 +56,7 @@ export default function LibraryPanel({ library, onWordClick }: Props) {
                 type="button"
                 onClick={() => setSelectedCategory(category)}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                  selectedCategory === category
+                  activeCategory === category
                     ? "bg-gray-900 text-white"
                     : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
                 }`}
