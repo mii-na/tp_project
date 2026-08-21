@@ -4,18 +4,21 @@ import Translator from "../components/Translator";
 import Trans_Result from "../components/Trans_Result";
 import History from "../components/History";
 import Library from "../components/Library";
-import type {WordInfo} from "../types/WordInfo";
+import type { WordInfo } from "../types/WordInfo";
 import WordModel from "../components/WordModel";
 
 const LIBRARY_STORAGE_KEY = "singlish-translator-library";
-const HISTORY_STORAGE_KEY = "singlish-translator-history"; // 追加
+const HISTORY_STORAGE_KEY = "singlish-translator-history";
+
+type ActiveTab = "Translator" | "Library";
 
 export default function Home() {
   const [inputText, setInputText] = useState("");
+  const [activeTab, setActiveTab] = useState<ActiveTab>("Translator");
   const [translation, setTranslation] = useState({
     english: "",
-    japanese:"",
-    original:"",
+    japanese: "",
+    original: "",
   });
 
   const [library, setLibrary] = useState<WordInfo[]>(() => {
@@ -28,7 +31,6 @@ export default function Home() {
     }
   });
 
-  // History: 初期値をlocalStorageから読み込む
   const [history, setHistory] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem(HISTORY_STORAGE_KEY);
@@ -43,7 +45,6 @@ export default function Home() {
   const [selectedWord, setSelectedWord] = useState<WordInfo | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // libraryが変化するたびにlocalStorageへ保存
   useEffect(() => {
     try {
       localStorage.setItem(LIBRARY_STORAGE_KEY, JSON.stringify(library));
@@ -52,7 +53,6 @@ export default function Home() {
     }
   }, [library]);
 
-  // historyが変化するたびにlocalStorageへ保存
   useEffect(() => {
     try {
       localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
@@ -63,9 +63,7 @@ export default function Home() {
 
   const addToLibrary = (newWords: WordInfo[]) => {
     setLibrary((prev) => {
-      const existingKeys = new Set(
-        prev.map((w) => w.word.toLowerCase())
-      );
+      const existingKeys = new Set(prev.map((w) => w.word.toLowerCase()));
 
       const uniqueNewWords = newWords.filter(
         (w) => !existingKeys.has(w.word.toLowerCase())
@@ -78,7 +76,7 @@ export default function Home() {
   const handleTranslate = async () => {
     setIsLoading(true);
 
-    try{
+    try {
       const response = await fetch("http://localhost:3000/translate", {
         method: "POST",
         headers: {
@@ -100,54 +98,77 @@ export default function Home() {
       });
 
       addToLibrary(data.words);
-
-      setHistory((prev) => [inputText, ...prev])      
-
-    }catch(error){
+      setHistory((prev) => [inputText, ...prev]);
+    } catch (error) {
       console.error("Translation error:", error);
-    }finally{
+    } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleWordClick = (word: WordInfo) => {
+    setSelectedWord(word);
+    setIsModel(true);
   };
 
   return (
     <main className="min-h-screen bg-gray-50">
       <Header />
 
-      <div className="mx-auto max-w-5xl space-y-6 p-8">
+      <div className="mx-auto max-w-5xl p-8">
+        <div className="mb-6 flex justify-center">
+          <div className="inline-flex rounded-xl bg-gray-100 p-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab("Translator")}
+              className={`rounded-lg px-6 py-2.5 text-sm font-medium transition ${
+                activeTab === "Translator"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              Translator
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("Library")}
+              className={`rounded-lg px-6 py-2.5 text-sm font-medium transition ${
+                activeTab === "Library"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              Library
+            </button>
+          </div>
+        </div>
 
-        <Translator
-          inputText={inputText}
-          setInputText={setInputText}
-          onTranslate={handleTranslate}
-          isLoading={isLoading}
-        />
+        {activeTab === "Translator" ? (
+          <div className="space-y-6">
+            <Translator
+              inputText={inputText}
+              setInputText={setInputText}
+              onTranslate={handleTranslate}
+              isLoading={isLoading}
+            />
 
-        <Trans_Result
-          translation={translation}
-          words={library}
-          onWordClick={(word) => {
-            setSelectedWord(word);
-            setIsModel(true);
-          }}
-        />
-        
-        <Library
-          library={library}
-          onWordClick={(word) => {
-            setSelectedWord(word);
-            setIsModel(true);
-          }}
-        />
+            <Trans_Result
+              translation={translation}
+              words={library}
+              onWordClick={handleWordClick}
+            />
 
-        <History history={history} />
+            <History history={history} />
+          </div>
+        ) : (
+          <Library library={library} onWordClick={handleWordClick} />
+        )}
 
         <WordModel
-            isOpen={isModel}
-            onClose={() => setIsModel(false)}
-            word={selectedWord}
+          isOpen={isModel}
+          onClose={() => setIsModel(false)}
+          word={selectedWord}
         />
-
       </div>
     </main>
   );
