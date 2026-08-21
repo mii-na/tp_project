@@ -1,63 +1,111 @@
-// 全体を管理するスクリプト
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Translator from "../components/Translator";
 import Trans_Result from "../components/Trans_Result";
 import History from "../components/History";
+import Library from "../components/Library";
 import type {WordInfo} from "../types/WordInfo";
 import WordModel from "../components/WordModel";
 
+const LIBRARY_STORAGE_KEY = "singlish-translator-library";
+const HISTORY_STORAGE_KEY = "singlish-translator-history"; // 追加
+
 export default function Home() {
- //inputTextの内容(初期値は(""))を読み取ってsetInputTextに書き込む
   const [inputText, setInputText] = useState("");
- //Translationに表示させるのは3言語だから，，，
   const [translation, setTranslation] = useState({
     english: "",
     japanese:"",
     original:"",
   });
-  
-  const [words, setWords] = useState<WordInfo[]>([]); 
-  const [history, setHistory] = useState<string[]>([]); //履歴のため  
-  const [isModel, setIsModel] = useState(false); //ポップアップ  
-  const [selectedWord, setSelectedWord] = useState<WordInfo | null>(null); //意味
-  const [isLoading, setIsLoading] = useState(false); //AI処理中かどうか
 
-  //translateボタンクリック時の処理
+  const [library, setLibrary] = useState<WordInfo[]>(() => {
+    try {
+      const saved = localStorage.getItem(LIBRARY_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch (error) {
+      console.error("Failed to load library from localStorage:", error);
+      return [];
+    }
+  });
+
+  // History: 初期値をlocalStorageから読み込む
+  const [history, setHistory] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem(HISTORY_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch (error) {
+      console.error("Failed to load history from localStorage:", error);
+      return [];
+    }
+  });
+
+  const [isModel, setIsModel] = useState(false);
+  const [selectedWord, setSelectedWord] = useState<WordInfo | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // libraryが変化するたびにlocalStorageへ保存
+  useEffect(() => {
+    try {
+      localStorage.setItem(LIBRARY_STORAGE_KEY, JSON.stringify(library));
+    } catch (error) {
+      console.error("Failed to save library to localStorage:", error);
+    }
+  }, [library]);
+
+  // historyが変化するたびにlocalStorageへ保存
+  useEffect(() => {
+    try {
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+    } catch (error) {
+      console.error("Failed to save history to localStorage:", error);
+    }
+  }, [history]);
+
+  const addToLibrary = (newWords: WordInfo[]) => {
+    setLibrary((prev) => {
+      const existingKeys = new Set(
+        prev.map((w) => w.word.toLowerCase())
+      );
+
+      const uniqueNewWords = newWords.filter(
+        (w) => !existingKeys.has(w.word.toLowerCase())
+      );
+
+      return [...prev, ...uniqueNewWords];
+    });
+  };
+
   const handleTranslate = async () => {
     setIsLoading(true);
-    // サーバにHTTPリクエストの送信
+
     try{
       const response = await fetch("http://localhost:3000/translate", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", // JSONを送るよーって言ってる
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          text:inputText, //入力を文字列にして送信
+          text: inputText,
+          knownWords: library.map((w) => w.word),
         }),
       });
 
-      // バックエンドからの結果をdataに受け取る
       const data = await response.json();
       console.log("Backend response:", data);
 
-       // Translationに保存
       setTranslation({
         english: data.english,
         japanese: data.japanese,
         original: data.original,
       });
 
-      // 見つけたwordをセット
-      setWords(data.words);
-      // Historyに記録
+      addToLibrary(data.words);
+
       setHistory((prev) => [inputText, ...prev])      
 
     }catch(error){
       console.error("Translation error:", error);
-    }
-    finally {
+    }finally{
       setIsLoading(false);
     }
   };
@@ -68,7 +116,6 @@ export default function Home() {
 
       <div className="mx-auto max-w-5xl space-y-6 p-8">
 
-        {/* 各スクリプトに渡す引数 */}
         <Translator
           inputText={inputText}
           setInputText={setInputText}
@@ -78,7 +125,7 @@ export default function Home() {
 
         <Trans_Result
           translation={translation}
-          words={words}
+          words={library}
           onWordClick={(word) => {
             setSelectedWord(word);
             setIsModel(true);
@@ -86,6 +133,14 @@ export default function Home() {
         />
 
         <History history={history} />
+
+        <Library
+          library={library}
+          onWordClick={(word) => {
+            setSelectedWord(word);
+            setIsModel(true);
+          }}
+        />
 
         <WordModel
             isOpen={isModel}

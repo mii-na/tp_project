@@ -178,7 +178,7 @@ export default function Trans_Result({
 }
 
 // 単語によって色を分ける処理
-function getCategoryStyle(category: string) {
+export function getCategoryStyle(category: string) {
   switch (category) {
     case "Singlish":
       return "bg-blue-100 text-blue-700";

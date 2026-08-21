@@ -15,6 +15,7 @@ const MODELS = [
   "google/gemma-4-26b-a4b-it:free",
   "poolside/laguna-xs-2.1:free",
   "nvidia/nemotron-3-nano-30b-a3b:free",
+  "nvidia/nemotron-nano-9b-v2",
   "openrouter/free",
 ];
 
@@ -81,12 +82,17 @@ async function callModel(model, prompt) {
 
 // /translateのURLにPOSTリクエストが来た時の処理
 app.post("/translate", async (req, res) => {
-  const { text } = req.body;
+  const { text, knownWords = [] } = req.body; // 既知単語リストを受け取る
   const startTime = Date.now();
 
   console.log("Received text:", text);
+  console.log("Known words count:", knownWords.length);
 
-  // プロンプト（変更なし）
+  // 既知単語を除外するための一文を組み立てる
+  const knownWordsSection = knownWords.length > 0
+    ? `\n\nThe following words/expressions are ALREADY known and explained in a separate library. Do NOT include them in the "words" output, even if they appear in the input:\n${knownWords.join(", ")}\n\nOnly include NEW Singapore-specific words/expressions that are NOT in this list.`
+    : "";
+
   const prompt = `Analyze the input and return ONLY valid JSON.
   Tasks:
   1. Translate Singlish into natural Standard English.
@@ -105,6 +111,7 @@ app.post("/translate", async (req, res) => {
   - Remove Singlish particles such as "lah" from the Standard English translation when they do not add essential meaning.
   - Preserve Singaporean proper nouns such as Bugis, Orchard, Lau Pa Sat, and NUS.
   - Japanese should be a natural translation of the English meaning, not a word-for-word translation.
+  ${knownWordsSection}
 
   Categories must be exactly:
   "Singlish", "Slang", "Food", "Place", "Transportation", or "Organization".
