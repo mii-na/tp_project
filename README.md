@@ -1,32 +1,68 @@
-# React + TypeScript + Vite
+# Singlish Translator Assistant
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A web application that helps foreigners understand Singlish by translating it into Standard English and Japanese, while also explaining Singapore-specific words and expressions.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Translate Singlish into Standard English
+- Translate Singlish into Japanese
+- Detect Singapore-specific words and expressions
+- Explain the meaning, origin, and cultural background of detected words
+- Save translated words to a personal library
+- View translation history
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Frontend: React + TypeScript + Vite
+- Backend: Node.js + Express
+- AI: OpenRouter API
+- Styling: CSS
+- Data Storage: Browser localStorage
 
-## Expanding the Oxlint configuration
+## System Overview
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+```text
+User
+ ↓
+React / TypeScript
+ ↓
+Express Backend
+ ↓
+OpenRouter API
+ ↓
+Translation & Word Information
+ ↓
+React UI
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+The API key is stored in an environment variable and is not included in this repository.
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Project Structure
+
+tp_project/
+├── server/
+│   └── index.js              # Backend and AI processing
+├── src/
+│   ├── components/
+│   │   ├── Header.tsx
+│   │   ├── History.tsx
+│   │   ├── Library.tsx
+│   │   ├── Trans_Result.tsx
+│   │   ├── Translator.tsx
+│   │   └── WordModel.tsx
+│   ├── pages/
+│   │   └── Home.tsx
+│   ├── types/
+│   │   ├── WordInfo.ts
+│   │   └── translation.ts
+│   ├── materials/
+│   │   └── favicon.png
+│   ├── App.tsx
+│   ├── App.css
+│   └── index.css
+├── index.html
+├── package.json
+├── package-lock.json
+├── tsconfig.json
+├── tsconfig.app.json
+├── tsconfig.node.json
+└── vite.config.ts
