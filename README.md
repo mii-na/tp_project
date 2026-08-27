@@ -35,9 +35,11 @@ Translation & Word Information
 React UI
 
 The API key is stored in an environment variable and is not included in this repository.
+```
 
-## Project Structure
+### Project Structure
 
+```text
 tp_project/
 ├── server/
 │   └── index.js              # Backend and AI processing
@@ -66,3 +68,9 @@ tp_project/
 ├── tsconfig.app.json
 ├── tsconfig.node.json
 └── vite.config.ts
+```
+
+## Notes
+This project was developed as part of a student project at TP.
+
+The application uses AI-generated translations and explanations. Therefore, the accuracy of translations and cultural information may vary depending on the input and the AI model used.
